@@ -113,6 +113,7 @@ def rss_feed():
 
         title = escape(g["title"])
         affiliate = escape(g["affiliate_url"])
+        affiliate_daily = escape(g["affiliate_url"] + f"&ref={now.date()}")
         seller = escape(g.get("seller", ""))
         rating = g.get("rating", 0)
         price = g.get("starting_price", 0)
@@ -133,7 +134,7 @@ def rss_feed():
         items_xml += f"""
   <item>
     <title>{title}</title>
-    <link>{affiliate}</link>
+    <link>{affiliate_daily}</link>
     <description><![CDATA[{description}]]></description>
     <pubDate>{pub_str}</pubDate>
     <guid isPermaLink="false">{guid}</guid>
