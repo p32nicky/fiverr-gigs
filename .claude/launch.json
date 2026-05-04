@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "fiverr-dev",
+      "runtimeExecutable": "C:/Users/nickd/OneDrive/Desktop/fiverr/.venv/Scripts/uvicorn.exe",
+      "runtimeArgs": ["main:app", "--reload", "--port", "8001"],
+      "port": 8001
+    }
+  ]
+}

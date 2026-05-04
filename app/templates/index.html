@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+  <h1>Top-Rated Fiverr Gigs</h1>
+  <p>Curated daily — the highest-rated freelancers across web dev, design, SEO &amp; more.</p>
+
+  <form class="search-form" method="get" action="/">
+    <input
+      type="search"
+      name="q"
+      value="{{ query }}"
+      placeholder="Search gigs..."
+      class="search-input"
+    />
+    <select name="category" class="category-select">
+      <option value="">All Categories</option>
+      {% for cat in categories %}
+      <option value="{{ cat }}" {% if cat == category %}selected{% endif %}>{{ cat }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn-search">Search</button>
+  </form>
+</section>
+
+{% if gigs %}
+<p class="results-count">{{ total }} gigs found{% if query %} for "{{ query }}"{% endif %}{% if category %} in {{ category }}{% endif %}</p>
+
+<div class="gig-grid">
+  {% for g in gigs %}
+  <div class="gig-card">
+    <a href="/gig/{{ g.slug }}" class="card-img-wrap">
+      {% if g.image_url %}
+      <img
+        src="{{ g.image_url }}"
+        alt="{{ g.title }}"
+        loading="lazy"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+      />
+      <div class="img-placeholder" style="display:none;">🎯</div>
+      {% else %}
+      <div class="img-placeholder">🎯</div>
+      {% endif %}
+    </a>
+    <div class="card-body">
+      {% if g.category %}
+      <span class="category-badge">{{ g.category }}</span>
+      {% endif %}
+      <h3 class="gig-title">
+        <a href="/gig/{{ g.slug }}">{{ g.title }}</a>
+      </h3>
+      <p class="gig-seller">by <strong>{{ g.seller }}</strong>
+        {% if g.seller_level %}<span class="level-badge">{{ g.seller_level }}</span>{% endif %}
+      </p>
+      <div class="gig-stats">
+        {% if g.rating and g.rating > 0 %}
+        <span class="rating">⭐ {{ "%.1f"|format(g.rating) }}
+          {% if g.rating_count %}<span class="review-count">({{ g.rating_count }})</span>{% endif %}
+        </span>
+        {% else %}
+        <span class="top-rated-badge">Top Rated</span>
+        {% endif %}
+        {% if g.starting_price and g.starting_price > 0 %}
+        <span class="price">From ${{ "%.0f"|format(g.starting_price) }}</span>
+        {% endif %}
+      </div>
+      <a href="{{ g.affiliate_url }}" class="btn-fiverr" target="_blank" rel="noopener sponsored">
+        View on Fiverr →
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if total_pages > 1 %}
+<nav class="pagination">
+  {% if page > 1 %}
+  <a href="?q={{ query }}&category={{ category }}&page={{ page - 1 }}" class="page-btn">&larr; Prev</a>
+  {% endif %}
+  <span class="page-info">Page {{ page }} of {{ total_pages }}</span>
+  {% if page < total_pages %}
+  <a href="?q={{ query }}&category={{ category }}&page={{ page + 1 }}" class="page-btn">Next &rarr;</a>
+  {% endif %}
+</nav>
+{% endif %}
+
+{% else %}
+<div class="empty-state">
+  <p>No gigs found yet.</p>
+  {% if not query and not category %}
+  <p>Click the button below to fetch today's top-rated gigs.</p>
+  <form method="post" action="/api/ingest">
+    <button type="submit" class="btn-ingest">Fetch Top Gigs Now</button>
+  </form>
+  {% endif %}
+</div>
+{% endif %}
+
+<div class="admin-bar">
+  <form method="post" action="/api/ingest">
+    <button type="submit" class="btn-ingest-small">↻ Refresh Gigs</button>
+  </form>
+  <a href="/feed.xml" class="rss-link">📡 RSS Feed</a>
+</div>
+{% endblock %}

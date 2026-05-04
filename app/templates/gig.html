@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}{{ gig.title }} — {{ site_title }}{% endblock %}
+{% block description %}{{ gig.title }} by {{ gig.seller }} on Fiverr.{% if gig.rating %} Rated {{ "%.1f"|format(gig.rating) }}.{% endif %}{% if gig.starting_price %} Starting at ${{ "%.0f"|format(gig.starting_price) }}.{% endif %}{% endblock %}
+
+{% block og_title %}{{ gig.title }}{% endblock %}
+{% block og_description %}{{ gig.title }} by {{ gig.seller }} on Fiverr.{% if gig.rating %} ⭐ {{ "%.1f"|format(gig.rating) }}.{% endif %}{% if gig.starting_price %} From ${{ "%.0f"|format(gig.starting_price) }}.{% endif %}{% endblock %}
+{% block og_url %}{{ site_url }}/gig/{{ gig.slug }}{% endblock %}
+{% block og_image %}{% if gig.image_url %}{{ gig.image_url }}{% else %}{{ site_url }}/static/og-default.png{% endif %}{% endblock %}
+
+{% block tw_title %}{{ gig.title }}{% endblock %}
+{% block tw_desc %}{{ gig.title }} by {{ gig.seller }}.{% if gig.rating %} ⭐ {{ "%.1f"|format(gig.rating) }}{% endif %}{% if gig.starting_price %} · From ${{ "%.0f"|format(gig.starting_price) }}{% endif %}{% endblock %}
+{% block tw_image %}{% if gig.image_url %}{{ gig.image_url }}{% else %}{{ site_url }}/static/og-default.png{% endif %}{% endblock %}
+
+{% block content %}
+<div class="gig-detail">
+  <a href="/" class="back-link">&larr; Back to all gigs</a>
+
+  <div class="gig-detail-inner">
+    <div class="gig-detail-img">
+      {% if gig.image_url %}
+      <img src="{{ gig.image_url }}" alt="{{ gig.title }}"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
+      <div class="img-placeholder-lg" style="display:none;">🎯</div>
+      {% else %}
+      <div class="img-placeholder-lg">🎯</div>
+      {% endif %}
+    </div>
+
+    <div class="gig-detail-info">
+      {% if gig.category %}
+      <span class="category-badge">{{ gig.category }}</span>
+      {% endif %}
+
+      <h1 class="gig-detail-title">{{ gig.title }}</h1>
+
+      <p class="gig-detail-seller">
+        by <strong>{{ gig.seller }}</strong>
+        {% if gig.seller_level %}
+        <span class="level-badge">{{ gig.seller_level }}</span>
+        {% endif %}
+      </p>
+
+      <div class="gig-detail-stats">
+        {% if gig.rating and gig.rating > 0 %}
+        <div class="stat-item">
+          <span class="stat-label">Rating</span>
+          <span class="stat-value rating-big">⭐ {{ "%.1f"|format(gig.rating) }}
+            {% if gig.rating_count %}<small>({{ gig.rating_count }} reviews)</small>{% endif %}
+          </span>
+        </div>
+        {% else %}
+        <div class="stat-item">
+          <span class="top-rated-badge-lg">✓ Top Rated Gig</span>
+        </div>
+        {% endif %}
+
+        {% if gig.starting_price and gig.starting_price > 0 %}
+        <div class="stat-item">
+          <span class="stat-label">Starting at</span>
+          <span class="stat-value price-big">${{ "%.0f"|format(gig.starting_price) }}</span>
+        </div>
+        {% endif %}
+      </div>
+
+      {% if gig.description %}
+      <p class="gig-detail-desc">{{ gig.description }}</p>
+      {% endif %}
+
+      <a href="{{ gig.affiliate_url }}" class="btn-fiverr-big" target="_blank" rel="noopener sponsored">
+        Get This Gig on Fiverr →
+      </a>
+
+      <p class="disclosure-small">
+        Affiliate link — we may earn a commission at no extra cost to you.
+      </p>
+    </div>
+  </div>
+
+  <!-- Pinterest Pin It button -->
+  <div class="pin-section">
+    {% if gig.image_url %}
+    <a href="https://pinterest.com/pin/create/button/?url={{ (site_url + '/gig/' + gig.slug)|urlencode }}&media={{ gig.image_url|urlencode }}&description={{ (gig.title + ' — Get this top-rated Fiverr gig')|urlencode }}"
+       class="btn-pinterest"
+       data-pin-do="buttonPin"
+       target="_blank" rel="noopener">
+      📌 Save to Pinterest
+    </a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
