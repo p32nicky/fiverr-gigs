@@ -166,12 +166,17 @@ async def _gigs_from_dom(page, category: str) -> list[dict]:
                 let node = a;
                 for (let i = 0; i < 8; i++) { node = node.parentElement; if (!node) break; }
                 const text = node ? node.innerText : a.innerText;
-                const img = (node || a).querySelector('img');
-                results.push({
-                    href,
-                    text: text || '',
-                    imgUrl: img ? (img.src || img.dataset.src || '') : ''
-                });
+                // Only accept real Fiverr CDN images
+                let imgUrl = '';
+                const imgs = (node || a).querySelectorAll('img');
+                for (const img of imgs) {
+                    const src = img.src || img.dataset.src || '';
+                    if (src.includes('fiverr') || src.includes('cloudinary')) {
+                        imgUrl = src;
+                        break;
+                    }
+                }
+                results.push({ href, text: text || '', imgUrl });
             }
             return results;
         }""")
