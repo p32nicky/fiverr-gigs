@@ -98,7 +98,8 @@ def rss_feed():
     cfg = get_settings()
     now = datetime.now(timezone.utc)
     day_of_year = now.timetuple().tm_yday
-    gigs = get_feed_gigs(cfg.db_path, limit=10000, offset=0)
+    offset = ((day_of_year - 1) * 50) % max(1, _total_gigs(cfg.db_path))
+    gigs = get_feed_gigs(cfg.db_path, limit=50, offset=offset)
 
     site_url = cfg.site_url or "https://example.com"
     items_xml = ""
