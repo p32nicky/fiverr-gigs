@@ -104,7 +104,7 @@ def rss_feed():
     site_url = cfg.site_url or "https://example.com"
     items_xml = ""
     for i, g in enumerate(gigs):
-        pub_dt = now - timedelta(hours=i * 2)
+        pub_dt = now - timedelta(minutes=i * 2)
         pub_str = format_datetime(pub_dt)
         guid = f"{site_url}/gig/{escape(g['slug'])}?d={now.date()}"
 
